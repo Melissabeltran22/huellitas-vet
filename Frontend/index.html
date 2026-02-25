@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huellitas - Clínica Veterinaria</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Google Fonts para tipografía profesional -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ========================================= -->
+    <!-- BARRA DE NAVEGACIÓN PRINCIPAL             -->
+    <!-- ========================================= -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <span class="navbar-logo">🐾</span>
+            <h1 class="navbar-title">Huellitas</h1>
+            <span class="navbar-subtitle">Clínica Veterinaria</span>
+        </div>
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="navbar-menu" id="navbarMenu">
+            <li><a href="#" class="nav-link active" data-section="dashboard">Inicio</a></li>
+            <li><a href="#" class="nav-link" data-section="duenos">Dueños</a></li>
+            <li><a href="#" class="nav-link" data-section="mascotas">Mascotas</a></li>
+            <li><a href="#" class="nav-link" data-section="citas">Citas</a></li>
+            <li><a href="#" class="nav-link" data-section="historial">Historial</a></li>
+        </ul>
+    </nav>
+
+    <!-- ========================================= -->
+    <!-- CONTENIDO PRINCIPAL                       -->
+    <!-- ========================================= -->
+    <main class="main-content" id="mainContent">
+
+        <!-- ====== DASHBOARD (Inicio) ====== -->
+        <section class="section" id="sectionDashboard">
+            <div class="dashboard-header">
+                <h2>Bienvenido a Huellitas 🐾</h2>
+                <p>Sistema de gestión clínica veterinaria</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card stat-duenos">
+                    <div class="stat-icon">👤</div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="statDuenos">0</span>
+                        <span class="stat-label">Dueños</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-mascotas">
+                    <div class="stat-icon">🐕</div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="statMascotas">0</span>
+                        <span class="stat-label">Mascotas</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-citas">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="statCitas">0</span>
+                        <span class="stat-label">Citas Programadas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buscador global -->
+            <div class="search-global">
+                <h3>🔍 Buscador de Mascotas</h3>
+                <p>Busca por nombre de mascota o documento del dueño</p>
+                <div class="search-bar">
+                    <input type="text" id="buscadorGlobal" placeholder="Ej: Firulais o 1001234567" aria-label="Buscar mascota">
+                    <button onclick="buscarMascotaGlobal()" class="btn btn-primary">Buscar</button>
+                </div>
+                <div id="resultadosBusqueda" class="search-results"></div>
+            </div>
+
+            <!-- Próximas citas -->
+            <div class="proximas-citas">
+                <h3>📋 Próximas Citas</h3>
+                <div id="listaCitasDashboard" class="citas-preview"></div>
+            </div>
+        </section>
+
+        <!-- ====== SECCIÓN DUEÑOS ====== -->
+        <section class="section hidden" id="sectionDuenos">
+            <div class="section-header">
+                <h2>👤 Gestión de Dueños</h2>
+                <button onclick="mostrarFormularioDueno()" class="btn btn-primary">+ Nuevo Dueño</button>
+            </div>
+
+            <!-- Formulario de Dueño (oculto por defecto) -->
+            <div class="form-container hidden" id="formDueno">
+                <h3 id="formDuenoTitulo">Registrar Nuevo Dueño</h3>
+                <form onsubmit="guardarDueno(event)">
+                    <input type="hidden" id="duenoId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="duenoNombre">Nombre *</label>
+                            <input type="text" id="duenoNombre" required placeholder="Ej: Carlos">
+                        </div>
+                        <div class="form-group">
+                            <label for="duenoApellido">Apellido *</label>
+                            <input type="text" id="duenoApellido" required placeholder="Ej: Ramírez">
+                        </div>
+                        <div class="form-group">
+                            <label for="duenoDocumento">Documento *</label>
+                            <input type="text" id="duenoDocumento" required placeholder="Ej: 1001234567">
+                        </div>
+                        <div class="form-group">
+                            <label for="duenoTelefono">Teléfono *</label>
+                            <input type="tel" id="duenoTelefono" required placeholder="Ej: 3001234567">
+                        </div>
+                        <div class="form-group">
+                            <label for="duenoCorreo">Correo</label>
+                            <input type="email" id="duenoCorreo" placeholder="Ej: correo@ejemplo.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="duenoDireccion">Dirección</label>
+                            <input type="text" id="duenoDireccion" placeholder="Ej: Cra 45 # 30-12">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button type="button" onclick="cancelarFormularioDueno()" class="btn btn-secondary">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabla de Dueños -->
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Documento</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th class="hide-mobile">Mascotas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaDuenos">
+                        <tr><td colspan="6" class="loading">Cargando datos...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ====== SECCIÓN MASCOTAS ====== -->
+        <section class="section hidden" id="sectionMascotas">
+            <div class="section-header">
+                <h2>🐕 Gestión de Mascotas</h2>
+                <button onclick="mostrarFormularioMascota()" class="btn btn-primary">+ Nueva Mascota</button>
+            </div>
+
+            <!-- Formulario de Mascota -->
+            <div class="form-container hidden" id="formMascota">
+                <h3 id="formMascotaTitulo">Registrar Nueva Mascota</h3>
+                <form onsubmit="guardarMascota(event)">
+                    <input type="hidden" id="mascotaId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="mascotaNombre">Nombre *</label>
+                            <input type="text" id="mascotaNombre" required placeholder="Ej: Firulais">
+                        </div>
+                        <div class="form-group">
+                            <label for="mascotaEspecie">Especie *</label>
+                            <select id="mascotaEspecie" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Perro">Perro</option>
+                                <option value="Gato">Gato</option>
+                                <option value="Ave">Ave</option>
+                                <option value="Reptil">Reptil</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mascotaRaza">Raza *</label>
+                            <input type="text" id="mascotaRaza" required placeholder="Ej: Labrador Retriever">
+                        </div>
+                        <div class="form-group">
+                            <label for="mascotaFechaNacimiento">Fecha de Nacimiento *</label>
+                            <input type="date" id="mascotaFechaNacimiento" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mascotaPeso">Peso (kg)</label>
+                            <input type="number" id="mascotaPeso" step="0.1" min="0" placeholder="Ej: 12.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="mascotaDueno">Dueño *</label>
+                            <select id="mascotaDueno" required>
+                                <option value="">Seleccionar dueño...</option>
+                            </select>
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="mascotaObservaciones">Observaciones</label>
+                            <textarea id="mascotaObservaciones" rows="2" placeholder="Alergias, condiciones especiales..."></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button type="button" onclick="cancelarFormularioMascota()" class="btn btn-secondary">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tarjetas de Mascotas -->
+            <div class="cards-grid" id="gridMascotas">
+                <p class="loading">Cargando mascotas...</p>
+            </div>
+        </section>
+
+        <!-- ====== SECCIÓN CITAS ====== -->
+        <section class="section hidden" id="sectionCitas">
+            <div class="section-header">
+                <h2>📅 Gestión de Citas</h2>
+                <button onclick="mostrarFormularioCita()" class="btn btn-primary">+ Nueva Cita</button>
+            </div>
+
+            <!-- Formulario de Cita -->
+            <div class="form-container hidden" id="formCita">
+                <h3 id="formCitaTitulo">Agendar Nueva Cita</h3>
+                <form onsubmit="guardarCita(event)">
+                    <input type="hidden" id="citaId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="citaMascota">Mascota *</label>
+                            <select id="citaMascota" required>
+                                <option value="">Seleccionar mascota...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="citaFecha">Fecha *</label>
+                            <input type="date" id="citaFecha" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="citaHora">Hora *</label>
+                            <input type="time" id="citaHora" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="citaEstado">Estado</label>
+                            <select id="citaEstado">
+                                <option value="Programada">Programada</option>
+                                <option value="Completada">Completada</option>
+                                <option value="Cancelada">Cancelada</option>
+                            </select>
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="citaMotivo">Motivo *</label>
+                            <textarea id="citaMotivo" rows="2" required placeholder="Ej: Vacunación anual"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button type="button" onclick="cancelarFormularioCita()" class="btn btn-secondary">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabla de Citas -->
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Mascota</th>
+                            <th class="hide-mobile">Dueño</th>
+                            <th>Motivo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaCitas">
+                        <tr><td colspan="7" class="loading">Cargando citas...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ====== SECCIÓN HISTORIAL CLÍNICO (Valor Agregado) ====== -->
+        <section class="section hidden" id="sectionHistorial">
+            <div class="section-header">
+                <h2>🩺 Historial Clínico</h2>
+                <button onclick="mostrarFormularioHistorial()" class="btn btn-primary">+ Nuevo Registro</button>
+            </div>
+
+            <!-- Selector de mascota para filtrar historial -->
+            <div class="historial-filtro">
+                <label for="historialFiltroMascota">Ver historial de:</label>
+                <select id="historialFiltroMascota" onchange="filtrarHistorialPorMascota()">
+                    <option value="">Todas las mascotas</option>
+                </select>
+            </div>
+
+            <!-- Formulario de Historial Clínico -->
+            <div class="form-container hidden" id="formHistorial">
+                <h3 id="formHistorialTitulo">Nuevo Registro Clínico</h3>
+                <form onsubmit="guardarHistorial(event)">
+                    <input type="hidden" id="historialId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="historialMascota">Mascota *</label>
+                            <select id="historialMascota" required>
+                                <option value="">Seleccionar mascota...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="historialFecha">Fecha *</label>
+                            <input type="date" id="historialFecha" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="historialVeterinario">Veterinario *</label>
+                            <input type="text" id="historialVeterinario" required placeholder="Ej: Dra. Valentina Restrepo">
+                        </div>
+                        <div class="form-group">
+                            <label for="historialPeso">Peso en consulta (kg)</label>
+                            <input type="number" id="historialPeso" step="0.1" min="0" placeholder="Ej: 12.5">
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="historialDiagnostico">Diagnóstico *</label>
+                            <textarea id="historialDiagnostico" rows="2" required placeholder="Ej: Dermatitis alérgica por contacto"></textarea>
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="historialTratamiento">Tratamiento *</label>
+                            <textarea id="historialTratamiento" rows="2" required placeholder="Ej: Baño medicado cada 3 días por 2 semanas"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="historialMedicamentos">Medicamentos</label>
+                            <input type="text" id="historialMedicamentos" placeholder="Ej: Prednisolona 5mg">
+                        </div>
+                        <div class="form-group">
+                            <label for="historialObservaciones">Observaciones</label>
+                            <input type="text" id="historialObservaciones" placeholder="Notas adicionales">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button type="button" onclick="cancelarFormularioHistorial()" class="btn btn-secondary">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Timeline de Historial Clínico -->
+            <div id="timelineHistorial" class="historial-timeline">
+                <p class="loading">Cargando historial clínico...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================= -->
+    <!-- MODAL DE CONFIRMACIÓN                     -->
+    <!-- ========================================= -->
+    <div class="modal-overlay hidden" id="modalConfirmacion">
+        <div class="modal">
+            <h3 id="modalTitulo">Confirmar acción</h3>
+            <p id="modalMensaje">¿Está seguro?</p>
+            <div class="modal-actions">
+                <button onclick="confirmarAccion()" class="btn btn-danger">Eliminar</button>
+                <button onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- NOTIFICACIONES TOAST                      -->
+    <!-- ========================================= -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ========================================= -->
+    <!-- SCRIPTS DE LA APLICACIÓN                  -->
+    <!-- ========================================= -->
+    <script src="js/api.js"></script>
+    <script src="js/duenos.js"></script>
+    <script src="js/mascotas.js"></script>
+    <script src="js/citas.js"></script>
+    <script src="js/historial.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

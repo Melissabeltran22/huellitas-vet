@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huellitas - Panel de Administración BD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Variables ===== */
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --border: #475569;
+            --white: #f8fafc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        /* ===== Header ===== */
+        .admin-header {
+            background: var(--surface);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-header h1 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-header h1 span { color: var(--primary); }
+
+        .header-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .header-links a:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ===== Layout ===== */
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: calc(100vh - 56px);
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-right: 1px solid var(--border);
+        }
+
+        .connection-badge {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .connection-badge.cloud {
+            background: rgba(37, 99, 235, 0.15);
+            border: 1px solid var(--primary);
+            color: #93c5fd;
+        }
+
+        .connection-badge.local {
+            background: rgba(22, 163, 74, 0.15);
+            border: 1px solid var(--success);
+            color: #86efac;
+        }
+
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .cloud .connection-dot { background: var(--primary); }
+        .local .connection-dot { background: var(--success); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .sidebar h3 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .table-list { list-style: none; }
+
+        .table-item {
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-bottom: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .table-item:hover { background: var(--surface-light); }
+
+        .table-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .table-item .count {
+            background: rgba(255,255,255,0.15);
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-estructura {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--surface-light);
+            color: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-estructura:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* ===== Main Content ===== */
+        .main-panel {
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .panel-header h2 {
+            font-size: 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary);
+        }
+
+        .panel-header span {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* ===== Data Table ===== */
+        .db-table-wrapper {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .db-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .db-table th {
+            background: var(--surface-light);
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+        }
+
+        .db-table th.pk { color: var(--warning); }
+        .db-table th.fk { color: #34d399; }
+
+        .db-table td {
+            padding: 0.5rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .db-table tr:hover td {
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .db-table td.null-val {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .db-table td.pk-val {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .db-table td.fk-val {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        /* ===== Structure View ===== */
+        .estructura-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1rem;
+        }
+
+        .estructura-card {
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .estructura-card-header {
+            background: var(--surface-light);
+            padding: 0.75rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .col-row {
+            padding: 0.4rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .col-row:last-child { border-bottom: none; }
+
+        .col-name { font-weight: 500; }
+        .col-type { color: var(--text-secondary); font-size: 0.75rem; }
+
+        .col-badge {
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+
+        .col-badge.pk { background: rgba(251, 191, 36, 0.2); color: var(--warning); }
+        .col-badge.fk { background: rgba(52, 211, 153, 0.2); color: #34d399; }
+        .col-badge.unique { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+
+        .fk-ref {
+            font-size: 0.7rem;
+            color: #34d399;
+            display: block;
+            margin-top: 0.1rem;
+        }
+
+        /* ===== Welcome ===== */
+        .welcome-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .welcome-panel h2 {
+            font-size: 1.5rem;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-panel p { max-width: 400px; line-height: 1.6; }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .estructura-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <h1><span>Huellitas</span> — Panel de Administracion BD</h1>
+        <div class="header-links">
+            <a href="/">Volver a la App</a>
+        </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="connection-badge local" id="connectionBadge">
+                <div class="connection-dot"></div>
+                <span id="connectionText">Conectando...</span>
+            </div>
+
+            <h3>Tablas</h3>
+            <ul class="table-list" id="tableList">
+                <li class="table-item" onclick="cargarTabla('duenos')" id="tab-duenos">
+                    <span>duenos</span><span class="count" id="count-duenos">-</span>
+                </li>
+                <li class="table-item" onclick="cargarTabla('mascotas')" id="tab-mascotas">
+                    <span>mascotas</span><span class="count" id="count-mascotas">-</span>
+                </li>
+                <li class="table-item" onclick="cargarTabla('citas')" id="tab-citas">
+                    <span>citas</span><span class="count" id="count-citas">-</span>
+                </li>
+                <li class="table-item" onclick="cargarTabla('historial_clinico')" id="tab-historial_clinico">
+                    <span>historial_clinico</span><span class="count" id="count-historial_clinico">-</span>
+                </li>
+            </ul>
+
+            <div class="sidebar-section">
+                <h3>Herramientas</h3>
+                <button class="btn-estructura" onclick="verEstructura()">
+                    Ver Estructura (PKs, FKs, Tipos)
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Panel -->
+        <main class="main-panel" id="mainPanel">
+            <div class="welcome-panel">
+                <h2>Panel de Administracion</h2>
+                <p>Seleccione una tabla de la barra lateral para inspeccionar sus datos, o use "Ver Estructura" para revisar las llaves primarias, foraneas y tipos de datos.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        /**
+         * Panel de Administracion de BD - Huellitas Vet.
+         * Permite al evaluador inspeccionar tablas, datos y estructura
+         * directamente desde el navegador sin necesitar herramientas externas.
+         */
+
+        // Columnas que son PK o FK (para resaltado visual)
+        const columnasEspeciales = {
+            "id": "pk",
+            "duenoId": "fk",
+            "mascotaId": "fk"
+        };
+
+        /** Carga información general de la BD al iniciar. */
+        async function cargarInfo() {
+            try {
+                const resp = await fetch("/api/admin/info");
+                const data = await resp.json();
+
+                // Actualizar badge de conexion
+                const badge = document.getElementById("connectionBadge");
+                const text = document.getElementById("connectionText");
+                text.textContent = data.conexion;
+
+                if (data.conexion.includes("Local") || data.conexion.includes("SQLite")) {
+                    badge.className = "connection-badge local";
+                } else {
+                    badge.className = "connection-badge cloud";
+                }
+
+                // Actualizar contadores de registros
+                data.tablas.forEach(tabla => {
+                    const countEl = document.getElementById(`count-${tabla.nombre}`);
+                    if (countEl) countEl.textContent = tabla.registros;
+                });
+            } catch (error) {
+                console.error("Error al cargar info:", error);
+            }
+        }
+
+        /** Carga y muestra los datos de una tabla especifica. */
+        async function cargarTabla(nombre) {
+            // Marcar tab activo
+            document.querySelectorAll(".table-item").forEach(t => t.classList.remove("active"));
+            document.getElementById(`tab-${nombre}`).classList.add("active");
+
+            try {
+                const resp = await fetch(`/api/admin/tabla/${nombre}`);
+                const data = await resp.json();
+                const panel = document.getElementById("mainPanel");
+
+                if (data.registros.length === 0) {
+                    panel.innerHTML = `
+                        <div class="panel-header">
+                            <h2>${nombre}</h2>
+                            <span>0 registros</span>
+                        </div>
+                        <div class="welcome-panel">
+                            <p>Esta tabla esta vacia. Ejecute <code>python seed.py</code> para cargar datos de prueba.</p>
+                        </div>`;
+                    return;
+                }
+
+                // Generar encabezados con indicadores PK/FK
+                const headers = data.columnas.map(col => {
+                    const tipo = columnasEspeciales[col] || "";
+                    return `<th class="${tipo}">${col}${tipo === "pk" ? " (PK)" : tipo === "fk" ? " (FK)" : ""}</th>`;
+                }).join("");
+
+                // Generar filas de datos
+                const rows = data.registros.map(reg => {
+                    const cells = data.columnas.map(col => {
+                        const val = reg[col];
+                        const tipo = columnasEspeciales[col] || "";
+                        if (val === null) {
+                            return `<td class="null-val">NULL</td>`;
+                        }
+                        return `<td class="${tipo ? tipo + '-val' : ''}">${val}</td>`;
+                    }).join("");
+                    return `<tr>${cells}</tr>`;
+                }).join("");
+
+                panel.innerHTML = `
+                    <div class="panel-header">
+                        <h2>SELECT * FROM ${nombre}</h2>
+                        <span>${data.total} registro${data.total !== 1 ? "s" : ""}</span>
+                    </div>
+                    <div class="db-table-wrapper">
+                        <table class="db-table">
+                            <thead><tr>${headers}</tr></thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>`;
+            } catch (error) {
+                console.error("Error al cargar tabla:", error);
+            }
+        }
+
+        /** Muestra la estructura completa de la BD (columnas, tipos, PKs, FKs). */
+        async function verEstructura() {
+            document.querySelectorAll(".table-item").forEach(t => t.classList.remove("active"));
+
+            try {
+                const resp = await fetch("/api/admin/estructura");
+                const data = await resp.json();
+                const panel = document.getElementById("mainPanel");
+
+                const cards = data.estructura.map(tabla => {
+                    const cols = tabla.columnas.map(col => {
+                        let badges = "";
+                        if (col.primaryKey) badges += `<span class="col-badge pk">PK</span> `;
+                        if (col.foreignKey) badges += `<span class="col-badge fk">FK</span> `;
+                        if (col.unique) badges += `<span class="col-badge unique">UNIQUE</span> `;
+
+                        let fkRef = "";
+                        if (col.foreignKey) {
+                            fkRef = `<span class="fk-ref">-> ${col.foreignKey}</span>`;
+                        }
+
+                        return `
+                            <div class="col-row">
+                                <div>
+                                    <span class="col-name">${col.nombre}</span>
+                                    ${fkRef}
+                                </div>
+                                <div style="display:flex;align-items:center;gap:0.5rem;">
+                                    ${badges}
+                                    <span class="col-type">${col.tipo}</span>
+                                </div>
+                            </div>`;
+                    }).join("");
+
+                    return `
+                        <div class="estructura-card">
+                            <div class="estructura-card-header">${tabla.nombre}</div>
+                            ${cols}
+                        </div>`;
+                }).join("");
+
+                panel.innerHTML = `
+                    <div class="panel-header">
+                        <h2>Estructura de la Base de Datos</h2>
+                        <span>${data.totalTablas} tablas — Conexion: ${data.conexion}</span>
+                    </div>
+                    <div class="estructura-grid">${cards}</div>`;
+            } catch (error) {
+                console.error("Error al cargar estructura:", error);
+            }
+        }
+
+        // Cargar info al iniciar
+        cargarInfo();
+    </script>
+</body>
+</html>

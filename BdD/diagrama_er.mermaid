@@ -1,0 +1,33 @@
+erDiagram
+    DUENOS {
+        INTEGER id PK "Llave primaria"
+        VARCHAR nombre "NOT NULL"
+        VARCHAR apellido "NOT NULL"
+        VARCHAR documento "UNIQUE, NOT NULL"
+        VARCHAR telefono "NOT NULL"
+        VARCHAR correo "Opcional"
+        VARCHAR direccion "Opcional"
+    }
+
+    MASCOTAS {
+        INTEGER id PK "Llave primaria"
+        VARCHAR nombre "NOT NULL"
+        VARCHAR especie "NOT NULL"
+        VARCHAR raza "NOT NULL"
+        DATE fechaNacimiento "NOT NULL"
+        FLOAT peso "Opcional (kg)"
+        TEXT observaciones "Opcional"
+        INTEGER duenoId FK "FK -> duenos.id"
+    }
+
+    CITAS {
+        INTEGER id PK "Llave primaria"
+        DATE fecha "NOT NULL"
+        TIME hora "NOT NULL"
+        VARCHAR motivo "NOT NULL"
+        VARCHAR estado "Default: Programada"
+        INTEGER mascotaId FK "FK -> mascotas.id"
+    }
+
+    DUENOS ||--o{ MASCOTAS : "tiene"
+    MASCOTAS ||--o{ CITAS : "tiene"

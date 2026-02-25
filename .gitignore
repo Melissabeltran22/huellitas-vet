@@ -1,0 +1,20 @@
+# Archivo de credenciales (NUNCA subir a Git)
+.env
+
+# Base de datos local
+*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

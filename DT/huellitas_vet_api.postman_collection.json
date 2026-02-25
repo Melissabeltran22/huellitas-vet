@@ -1,0 +1,361 @@
+{
+    "info": {
+        "name": "Huellitas Vet API",
+        "description": "Colección de pruebas para la API REST de la Clínica Veterinaria Huellitas.\nIncluye endpoints CRUD para Dueños, Mascotas y Citas.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:5000/api"
+        }
+    ],
+    "item": [
+        {
+            "name": "Estado de la API",
+            "item": [
+                {
+                    "name": "Verificar estado",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/estado",
+                        "description": "Verifica que la API esté operativa."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Dueños",
+            "item": [
+                {
+                    "name": "Listar todos los dueños",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/duenos",
+                        "description": "Obtiene la lista completa de dueños registrados."
+                    }
+                },
+                {
+                    "name": "Crear nuevo dueño",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/duenos",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nombre\": \"Pedro\",\n    \"apellido\": \"Sánchez\",\n    \"documento\": \"1112223334\",\n    \"telefono\": \"3001112233\",\n    \"correo\": \"pedro@email.com\",\n    \"direccion\": \"Cra 50 # 20-10, Medellín\"\n}"
+                        },
+                        "description": "Registra un nuevo dueño. Campos obligatorios: nombre, apellido, documento, telefono."
+                    }
+                },
+                {
+                    "name": "Obtener dueño por ID",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/duenos/1",
+                        "description": "Obtiene los datos de un dueño específico."
+                    }
+                },
+                {
+                    "name": "Actualizar dueño",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{baseUrl}}/duenos/1",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"telefono\": \"3009999999\",\n    \"correo\": \"carlos.nuevo@email.com\"\n}"
+                        },
+                        "description": "Actualiza parcialmente la información de un dueño."
+                    }
+                },
+                {
+                    "name": "Buscar dueño por documento",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/duenos/buscar?q=1001234567",
+                        "description": "Busca dueños por nombre, apellido o documento."
+                    }
+                },
+                {
+                    "name": "Eliminar dueño",
+                    "request": {
+                        "method": "DELETE",
+                        "url": "{{baseUrl}}/duenos/1",
+                        "description": "Elimina un dueño y todas sus mascotas/citas asociadas (CASCADE)."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Mascotas",
+            "item": [
+                {
+                    "name": "Listar todas las mascotas",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/mascotas",
+                        "description": "Obtiene la lista completa de mascotas con datos del dueño."
+                    }
+                },
+                {
+                    "name": "Crear nueva mascota",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/mascotas",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nombre\": \"Toby\",\n    \"especie\": \"Perro\",\n    \"raza\": \"Poodle\",\n    \"fechaNacimiento\": \"2023-05-10\",\n    \"peso\": 5.5,\n    \"observaciones\": \"Mascota nueva, primera consulta.\",\n    \"duenoId\": 1\n}"
+                        },
+                        "description": "Registra una nueva mascota asociada a un dueño existente."
+                    }
+                },
+                {
+                    "name": "Obtener mascota por ID",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/mascotas/1",
+                        "description": "Obtiene los datos completos de una mascota, incluyendo edad calculada."
+                    }
+                },
+                {
+                    "name": "Actualizar mascota",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{baseUrl}}/mascotas/1",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"peso\": 30.2,\n    \"observaciones\": \"Alergia a pollo. Vacunas al día. Peso actualizado.\"\n}"
+                        },
+                        "description": "Actualiza parcialmente la información de una mascota."
+                    }
+                },
+                {
+                    "name": "Buscar mascotas por nombre",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/mascotas/buscar?q=Firulais",
+                        "description": "Busca mascotas por nombre o por documento/nombre del dueño."
+                    }
+                },
+                {
+                    "name": "Buscar mascotas por documento dueño",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/mascotas/buscar?q=1001234567",
+                        "description": "Busca mascotas filtrando por el documento del dueño."
+                    }
+                },
+                {
+                    "name": "Eliminar mascota",
+                    "request": {
+                        "method": "DELETE",
+                        "url": "{{baseUrl}}/mascotas/1",
+                        "description": "Elimina una mascota y todas sus citas asociadas (CASCADE)."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Citas",
+            "item": [
+                {
+                    "name": "Listar todas las citas",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/citas",
+                        "description": "Obtiene la lista de citas ordenadas por fecha."
+                    }
+                },
+                {
+                    "name": "Agendar nueva cita",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/citas",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"mascotaId\": 1,\n    \"fecha\": \"2025-04-01\",\n    \"hora\": \"10:00\",\n    \"motivo\": \"Consulta general\"\n}"
+                        },
+                        "description": "Agenda una nueva cita. No permite fechas pasadas (validación de negocio)."
+                    }
+                },
+                {
+                    "name": "Obtener cita por ID",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/citas/1",
+                        "description": "Obtiene los datos de una cita específica."
+                    }
+                },
+                {
+                    "name": "Actualizar cita (reagendar)",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{baseUrl}}/citas/1",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"fecha\": \"2025-04-05\",\n    \"hora\": \"11:30\",\n    \"estado\": \"Programada\"\n}"
+                        },
+                        "description": "Reagenda una cita. Valida que la nueva fecha sea futura."
+                    }
+                },
+                {
+                    "name": "Completar cita",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{baseUrl}}/citas/1",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"estado\": \"Completada\"\n}"
+                        },
+                        "description": "Cambia el estado de una cita a Completada."
+                    }
+                },
+                {
+                    "name": "Eliminar cita",
+                    "request": {
+                        "method": "DELETE",
+                        "url": "{{baseUrl}}/citas/1",
+                        "description": "Elimina una cita del sistema."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Historial Clínico (Valor Agregado)",
+            "item": [
+                {
+                    "name": "Listar todo el historial",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/historial",
+                        "description": "Obtiene todos los registros clínicos ordenados por fecha."
+                    }
+                },
+                {
+                    "name": "Historial de una mascota",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/historial/mascota/1",
+                        "description": "Obtiene el expediente clínico completo de una mascota específica."
+                    }
+                },
+                {
+                    "name": "Crear registro clínico",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/historial",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"mascotaId\": 1,\n    \"fecha\": \"2025-02-10\",\n    \"diagnostico\": \"Control rutinario\",\n    \"tratamiento\": \"Sin hallazgos. Continuar plan actual.\",\n    \"medicamentos\": \"Desparasitante interno\",\n    \"veterinario\": \"Dra. Valentina Restrepo\",\n    \"pesoEnConsulta\": 28.3,\n    \"observaciones\": \"Paciente en buen estado\"\n}"
+                        },
+                        "description": "Crea un nuevo registro en el historial clínico de una mascota."
+                    }
+                },
+                {
+                    "name": "Actualizar registro clínico",
+                    "request": {
+                        "method": "PUT",
+                        "url": "{{baseUrl}}/historial/1",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"observaciones\": \"Actualizado: seguimiento en 3 meses\"\n}"
+                        },
+                        "description": "Actualiza un registro clínico existente."
+                    }
+                },
+                {
+                    "name": "Obtener registro por ID",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/historial/1",
+                        "description": "Obtiene un registro clínico específico."
+                    }
+                },
+                {
+                    "name": "Eliminar registro clínico",
+                    "request": {
+                        "method": "DELETE",
+                        "url": "{{baseUrl}}/historial/1",
+                        "description": "Elimina un registro del historial clínico."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Validaciones",
+            "item": [
+                {
+                    "name": "Error: Crear dueño sin campos",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/duenos",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nombre\": \"\",\n    \"apellido\": \"\",\n    \"documento\": \"\",\n    \"telefono\": \"\"\n}"
+                        },
+                        "description": "Verifica que no se permitan registros vacíos (debe retornar error 400)."
+                    }
+                },
+                {
+                    "name": "Error: Cita en fecha pasada",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/citas",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"mascotaId\": 1,\n    \"fecha\": \"2020-01-01\",\n    \"hora\": \"10:00\",\n    \"motivo\": \"Intento de cita en fecha pasada\"\n}"
+                        },
+                        "description": "Verifica que no se permitan citas en fechas pasadas (debe retornar error 400)."
+                    }
+                },
+                {
+                    "name": "Error: Documento duplicado",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{baseUrl}}/duenos",
+                        "header": [
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nombre\": \"Otro\",\n    \"apellido\": \"Usuario\",\n    \"documento\": \"1001234567\",\n    \"telefono\": \"3000000000\"\n}"
+                        },
+                        "description": "Verifica que no se permitan documentos duplicados (debe retornar error 409)."
+                    }
+                }
+            ]
+        }
+    ]
+}
